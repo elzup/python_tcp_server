@@ -17,7 +17,7 @@ if __name__ == '__main__':
             json_data = self.request.recv(1024).strip()
             if len(json_data) == 0:
                 print("emp")
-                continue
+                break
             if json_data.__class__.__name__ == "bytes":
                 json_data = json_data.decode('UTF-8')
             data = json.loads(json_data)
@@ -26,7 +26,7 @@ if __name__ == '__main__':
             screen_name = ""
             try:
                 screen_name = data['twitterID']
-            except IndexError:
+            except (IndexError, KeyError):
                 print("invalid data")
                 break
 
@@ -36,7 +36,6 @@ if __name__ == '__main__':
             print(res)
             self.request.send(res.encode('UTF-8'))
         self.request.close()
-        lm = None
 
     handler.Handler.set_work(work)
     limit = 1
