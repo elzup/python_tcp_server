@@ -16,7 +16,6 @@ if __name__ == '__main__':
         while True:
             json_data = self.request.recv(1024).strip()
             if len(json_data) == 0:
-                print("emp")
                 break
             if json_data.__class__.__name__ == "bytes":
                 json_data = json_data.decode('UTF-8')
@@ -29,11 +28,9 @@ if __name__ == '__main__':
             except (IndexError, KeyError):
                 print("invalid data")
                 break
-
-            res = ""
-            res += "screen_name: " + screen_name
             lm.InsertLog(sn = screen_name)
-            print(res)
+            users = lm.get_active_user_wrap()
+            res = json.dumps({"message": "accepted screen_name is " + screen_name, "active_users": users})
             self.request.send(res.encode('UTF-8'))
         self.request.close()
 

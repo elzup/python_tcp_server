@@ -42,9 +42,19 @@ create table IF NOT EXISTS db_log (
         res = c.execute(sql)
         return res
 
+    def get_active_user(self):
+        sql = u"select * from db_log where `timestamp` > datetime('now', 'localtime', '-5 minute')"
+        c = self.con.cursor()
+        stmt = c.execute(sql)
+        return stmt
+
+    def get_active_user_wrap(self):
+        stmt = self.get_active_user()
+        return {r[1]: r[2] for r in stmt.fetchall()}
+
 #    def SelectLog(self): 
 if __name__ == '__main__':
     lm = LogModel()
-    lm.InsertLog("hoge")
-    res = lm.SelectLog()
-    print (res.fetchall())
+    lm.InsertLog('fuga!')
+    res = lm.get_active_user_wrap()
+    print (res)

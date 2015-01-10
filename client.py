@@ -26,5 +26,6 @@ try:
 finally:
     sock.close()
 
+res_data = received.encode('UTF-8')
 print("Sent:     {}".format(data))
-print("Received: {}".format(received))
+print("Received: {}".format(res_data))
