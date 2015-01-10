@@ -12,22 +12,32 @@ if __name__ == '__main__':
     PORT = 4000
 
     def work(self):
+        lm = log_model.LogModel()
+        lm.Reset()
         while True:
             json_data = self.request.recv(1024).strip()
             if len(json_data) == 0:
                 print("emp")
-                break
+                continue
             if json_data.__class__.__name__ == "bytes":
                 json_data = json_data.decode('UTF-8')
-            print(json_data.__class__)
-            print(json_data)
             data = json.loads(json_data)
-            print(data)
+#            print(data)
+# TODO: filter users
+            screen_name = ""
+            try:
+                screen_name = data['twitterID']
+            except IndexError:
+                print("invalid data")
+                break
+
             res = ""
-            res += "sn: " + data['twitterID']
+            res += "screen_name: " + screen_name
+            lm.InsertLog(sn = screen_name)
             print(res)
             self.request.send(res.encode('UTF-8'))
         self.request.close()
+        lm = None
 
     handler.Handler.set_work(work)
     limit = 1
