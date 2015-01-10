@@ -13,7 +13,6 @@ if __name__ == '__main__':
 
     def work(self):
         lm = log_model.LogModel()
-        lm.Reset()
         while True:
             json_data = self.request.recv(1024).strip()
             if len(json_data) == 0:

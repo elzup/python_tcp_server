@@ -1,31 +1,30 @@
-# -*- coding: utf-8 -*-
-import sys
 import socket
+import sys
 
-# host = socket.gethostbyname('lightson.dip.jp')
-host = socket.gethostbyname('localhost')
+HOST = socket.gethostbyname('localhost')
+PORT = 4000
 # host = '133.14.234.245'
 # host = '133.20.178.81'
-port = 4000
 if len(sys.argv) > 1:
-    port = int(sys.argv[1])
+    PORT = int(sys.argv[1])
 name = "えるざっぷ"
 if len(sys.argv) > 2:
     name = sys.argv[2]
 
-so = socket.socket()
-so.connect((host, port))
-json_data = '{"SSIDs":["TDU_MRCL_WLAN_DOT1X","TDU_MRCL_WLAN","eduroam","TDU_MRCL_GUEST","Buffalo-G-3658"], "twitterID":"' + name + '"}'
-so.send(json_data.encode('UTF-8'))
+data = '{"SSIDs":["TDU_MRCL_WLAN_DOT1X","TDU_MRCL_WLAN","eduroam","TDU_MRCL_GUEST","Buffalo-G-3658"], "twitterID":"' + name + '"}'
 
-data = []
-while True:
-    message = so.recv(8192)
-    if not message:
-        break
-    print(message)
-    data.append(message)
-so.close()
+# Create a socket (SOCK_STREAM means a TCP socket)
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-data = ''.join(data)
-print(data)
+try:
+    # Connect to server and send data
+    sock.connect((HOST, PORT))
+    sock.sendall(bytes(data + "\n", "utf-8"))
+
+    # Receive data from the server and shut down
+    received = str(sock.recv(1024), "utf-8")
+finally:
+    sock.close()
+
+print("Sent:     {}".format(data))
+print("Received: {}".format(received))
