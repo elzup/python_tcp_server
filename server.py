@@ -11,27 +11,42 @@ if __name__ == '__main__':
     HOST = socket.gethostbyname('')
     PORT = 4000
 
+    def is_tdu_network(self):
+        return True
+
+
     def work(self):
         lm = log_model.LogModel()
         while True:
-            json_data = self.request.recv(1024).strip()
-            if len(json_data) == 0:
-                break
-            if json_data.__class__.__name__ == "bytes":
-                json_data = json_data.decode('UTF-8')
-            data = json.loads(json_data)
-#            print(data)
-# TODO: filter users
-            screen_name = ""
             try:
-                screen_name = data['twitterID']
+                json_data = self.request.recv(1024).strip()
+                if len(json_data) == 0:
+                    break
+                if json_data.__class__.__name__ == "bytes":
+                    json_data = json_data.decode('UTF-8')
+                data = json.loads(json_data)
+#                print(data)
+# TODO: filter users
+
+                screen_name = data['name']
+                ssids = data['SSIDs']
+                result = is_tdu_network(ssids)
+
+                lm.InsertLog(sn = screen_name)
+                users = lm.get_active_user_wrap()
+                res = json.dumps({
+                    "result" : result,
+                    "message": ("accepted screen_name is " + screen_name if result else "Your network is not in TDU"),
+                    "active_users": users
+                    })
+                self.request.send(res.encode('UTF-8'))
             except (IndexError, KeyError):
-                print("invalid data")
+                res = json.dumps({
+                    "result" : False,
+                    "message": "Invalid values"
+                    })
+                self.request.send(res.encode('UTF-8'))
                 break
-            lm.InsertLog(sn = screen_name)
-            users = lm.get_active_user_wrap()
-            res = json.dumps({"message": "accepted screen_name is " + screen_name, "active_users": users})
-            self.request.send(res.encode('UTF-8'))
         self.request.close()
 
     handler.Handler.set_work(work)

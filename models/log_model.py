@@ -3,6 +3,7 @@ import sqlite3
 
 
 class LogModel():
+
     con = sqlite3.connect("data.db")
 #    def __init__(self):
 
@@ -43,14 +44,16 @@ create table IF NOT EXISTS db_log (
         return res
 
     def get_active_user(self):
-        sql = u"select * from db_log where `timestamp` > datetime('now', 'localtime', '-5 minute')"
+        MINUTE = 5
+        sql = u"select * from db_log where `timestamp` > datetime('now', 'localtime', '-" + str(MINUTE) + " minute')"
         c = self.con.cursor()
         stmt = c.execute(sql)
         return stmt
 
     def get_active_user_wrap(self):
         stmt = self.get_active_user()
-        return {r[1]: r[2] for r in stmt.fetchall()}
+#        print(stmt.fetchall())
+        return [{"name": r[1], "last_accress": r[2]} for r in stmt.fetchall()]
 
 #    def SelectLog(self): 
 if __name__ == '__main__':

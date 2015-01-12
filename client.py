@@ -10,8 +10,11 @@ if len(sys.argv) > 1:
 name = "えるざっぷ"
 if len(sys.argv) > 2:
     name = sys.argv[2]
+if len(sys.argv) > 3:
+    HOST = socket.gethostbyname(sys.argv[3])
 
-data = '{"SSIDs":["TDU_MRCL_WLAN_DOT1X","TDU_MRCL_WLAN","eduroam","TDU_MRCL_GUEST","Buffalo-G-3658"], "twitterID":"' + name + '"}'
+
+data = '{"SSIDs":["TDU_MRCL_WLAN_DOT1X","TDU_MRCL_WLAN","eduroam","TDU_MRCL_GUEST","Buffalo-G-3658"], "name":"' + name + '"}'
 
 # Create a socket (SOCK_STREAM means a TCP socket)
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
