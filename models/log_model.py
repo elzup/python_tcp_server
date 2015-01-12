@@ -56,7 +56,10 @@ create table IF NOT EXISTS db_log (
     def get_active_user_wrap(self):
         stmt = self.get_active_user()
 #        print(stmt.fetchall())
-        return [{"name": r[1], "last_access": r[2]} for r in stmt.fetchall()]
+        return [{"name": n, "last_access": l}
+                for n, l in
+                {r[1]: r[2] for r in stmt.fetchall()}.items()
+                ]
 
 #    def SelectLog(self):
 if __name__ == '__main__':
