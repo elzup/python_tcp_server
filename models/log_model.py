@@ -44,8 +44,11 @@ create table IF NOT EXISTS db_log (
         return res
 
     def get_active_user(self):
-        MINUTE = 5
-        sql = u"select * from db_log where `timestamp` > datetime('now', 'localtime', '-" + str(MINUTE) + " minute')"
+        MINUTE = 10
+        sql = u"""select *
+        from db_log
+        where `timestamp` > datetime('now', 'localtime', '-%(MINUTE)s minute')
+        """ % locals()
         c = self.con.cursor()
         stmt = c.execute(sql)
         return stmt
@@ -53,9 +56,9 @@ create table IF NOT EXISTS db_log (
     def get_active_user_wrap(self):
         stmt = self.get_active_user()
 #        print(stmt.fetchall())
-        return [{"name": r[1], "last_accress": r[2]} for r in stmt.fetchall()]
+        return [{"name": r[1], "last_access": r[2]} for r in stmt.fetchall()]
 
-#    def SelectLog(self): 
+#    def SelectLog(self):
 if __name__ == '__main__':
     lm = LogModel()
     lm.InsertLog('fuga!')

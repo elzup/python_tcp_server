@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
-
-k = [{"name": r[1], "last_accress": r[2]} for r in [(51, '‚¦‚é‚´‚Á‚Õ', '2015-01-12 16:59:15')]]
-print(k)
+if __name__ == '__main__':
+    from models import log_model
+    lm = log_model.LogModel()
+#    lm.InsertLog('fuga!')
+#    res = lm.get_active_user_wrap()
+    res = lm.get_active_user_wrap()
+    print (res)

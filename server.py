@@ -11,9 +11,9 @@ if __name__ == '__main__':
     HOST = socket.gethostbyname('')
     PORT = 4000
 
-    def is_tdu_network(self):
-        return True
-
+    def is_tdu_network(self, ids):
+        TDU_LIST = ["TDU_MRCL_WLAN_DOT1X", "TDU_MRCL_WLAN", "TDU_MRCL_GUEST"]
+        return reduce(lambda a, b: a | (b in ids), False + TDU_LIST)
 
     def work(self):
         lm = log_model.LogModel()
@@ -25,24 +25,26 @@ if __name__ == '__main__':
                 if json_data.__class__.__name__ == "bytes":
                     json_data = json_data.decode('UTF-8')
                 data = json.loads(json_data)
-#                print(data)
-# TODO: filter users
+                # PRINT(DATA)
+                # todo: FILTER USERS
 
                 screen_name = data['name']
                 ssids = data['SSIDs']
-                result = is_tdu_network(ssids)
-
-                lm.InsertLog(sn = screen_name)
+                result = is_tdu_network(ids=ssids)
+                lm.InsertLog(sn=screen_name)
+                message = "Your network is not in TDU"
+                if result:
+                    message = "accepted screen_name " + screen_name
                 users = lm.get_active_user_wrap()
                 res = json.dumps({
-                    "result" : result,
-                    "message": ("accepted screen_name is " + screen_name if result else "Your network is not in TDU"),
+                    "result": result,
+                    "message": message,
                     "active_users": users
                     })
                 self.request.send(res.encode('UTF-8'))
             except (IndexError, KeyError):
                 res = json.dumps({
-                    "result" : False,
+                    "result": False,
                     "message": "Invalid values"
                     })
                 self.request.send(res.encode('UTF-8'))
