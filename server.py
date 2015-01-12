@@ -4,6 +4,7 @@ if __name__ == '__main__':
     import socketserver
     import socket
     import json
+    from functools import reduce
 
     from handles import handler
     from models import log_model
@@ -11,9 +12,9 @@ if __name__ == '__main__':
     HOST = socket.gethostbyname('')
     PORT = 4000
 
-    def is_tdu_network(self, ids):
+    def is_tdu_network(ids):
         TDU_LIST = ["TDU_MRCL_WLAN_DOT1X", "TDU_MRCL_WLAN", "TDU_MRCL_GUEST"]
-        return reduce(lambda a, b: a | (b in ids), False + TDU_LIST)
+        return reduce(lambda a, b: a | (b in ids), [False] + TDU_LIST)
 
     def work(self):
         lm = log_model.LogModel()
@@ -29,8 +30,8 @@ if __name__ == '__main__':
                 # todo: FILTER USERS
 
                 screen_name = data['name']
-                ssids = data['SSIDs']
-                result = is_tdu_network(ids=ssids)
+                ids = data['SSIDs']
+                result = is_tdu_network(ids)
                 lm.InsertLog(sn=screen_name)
                 message = "Your network is not in TDU"
                 if result:
