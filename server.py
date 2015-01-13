@@ -32,9 +32,9 @@ if __name__ == '__main__':
                 screen_name = data['name']
                 ids = data['SSIDs']
                 result = is_tdu_network(ids)
-                lm.InsertLog(sn=screen_name)
                 message = "Your network is not in TDU"
                 if result:
+                    lm.InsertLog(sn=screen_name)
                     message = "accepted screen_name " + screen_name
                 users = lm.get_active_user_wrap()
                 res = json.dumps({
